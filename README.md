@@ -17,6 +17,33 @@
 - 🔧 **易于扩展** - 模块化设计，易于添加新功能
 - 🛡️ **线程安全** - 使用ViewModelScope和协程确保线程安全
 
+## 🎯 设计理念
+
+### 核心设计原则
+- **单向数据流** - 确保数据流动的单一方向性，避免双向绑定带来的复杂性
+- **不可变状态** - 所有状态都是不可变的，确保状态变化的可预测性  
+- **响应式编程** - 基于Kotlin Flow实现响应式数据流
+- **类型安全** - 使用泛型确保编译时类型检查
+- **生命周期感知** - 自动处理Android生命周期
+
+### 为什么选择MVI？
+- ✅ **更严格的数据流控制** - 明确的Intent→State→View数据流向
+- ✅ **更好的状态管理** - 单一可信数据源，状态变化可追溯
+- ✅ **更清晰的副作用处理** - 使用Event明确处理一次性操作
+- ✅ **更适合复杂业务场景** - 大规模应用的状态管理更可靠
+
+### 技术栈决策
+- **Kotlin Flow** - 替代RxJava，更轻量级，与Kotlin协程完美集成
+- **StateFlow** - 用于状态管理，提供最新的状态值
+- **SharedFlow** - 用于事件处理，支持多个订阅者
+- **ViewModel** - 配合Android Jetpack生命周期管理
+
+### 架构优势
+- 🚀 **性能优化** - 差异更新、批量更新、防抖处理
+- 🛡️ **异常处理** - 统一的错误状态管理和恢复机制
+- 📈 **扩展性强** - 模块化设计，支持大规模应用
+- 🧪 **测试友好** - 所有状态和意图都可测试
+
 ## 📦 项目结构
 
 ```
@@ -109,11 +136,11 @@ sealed class HomeEvent : BaseEvent {
 
 ### 1. 定义你的Intent、State、Event
 
-参考 `mvidemo` 包中的示例，创建你的业务逻辑组件。
+参考 `mvidemo` 包中的示例，创建你的业务逻辑组件。详细设计原则请参考 [DESIGN.md](app/src/main/java/com/example/mvi/mvibase/DESIGN.md)。
 
 ### 2. 实现ViewModel
 
-继承 `BaseViewModel` 并实现业务逻辑：
+继承 `BaseViewModel` 并实现业务逻辑，技术细节参考 [IMPLEMENTATION.md](app/src/main/java/com/example/mvi/mvibase/IMPLEMENTATION.md)：
 
 ```kotlin
 class MyViewModel : BaseViewModel<MyIntent, MyState, MyEvent>() {
@@ -137,7 +164,7 @@ class MyViewModel : BaseViewModel<MyIntent, MyState, MyEvent>() {
 
 ### 3. 实现Activity
 
-继承 `BaseActivity` 并实现UI渲染：
+继承 `BaseActivity` 并实现UI渲染，完整示例参考 [USAGE.md](app/src/main/java/com/example/mvi/mvibase/USAGE.md)：
 
 ```kotlin
 class MyActivity : BaseActivity<MyIntent, MyState, MyEvent, MyViewModel>() {
@@ -185,7 +212,7 @@ class MyActivity : BaseActivity<MyIntent, MyState, MyEvent, MyViewModel>() {
 
 ## 🧪 测试
 
-项目包含完整的测试示例：
+项目包含完整的测试示例，测试策略参考 [IMPLEMENTATION.md](app/src/main/java/com/example/mvi/mvibase/IMPLEMENTATION.md)：
 
 ```bash
 ./gradlew test # 运行单元测试
@@ -203,7 +230,15 @@ class MyActivity : BaseActivity<MyIntent, MyState, MyEvent, MyViewModel>() {
 5. 打开Pull Request
 
 
-## 🙏 致谢
+## � 详细文档
+
+对于MVI架构的完整实现细节，请参考以下文档：
+
+- [DESIGN.md](app/src/main/java/com/example/mvi/mvibase/DESIGN.md) - 架构设计思路和原则
+- [IMPLEMENTATION.md](app/src/main/java/com/example/mvi/mvibase/IMPLEMENTATION.md) - 技术实现细节
+- [USAGE.md](app/src/main/java/com/example/mvi/mvibase/USAGE.md) - 完整使用指南和示例
+
+## �🙏 致谢
 
 - 感谢 [Jetpack](https://developer.android.com/jetpack) 团队提供的优秀架构组件
 - 感谢 [Kotlin](https://kotlinlang.org) 团队提供的现代化语言特性
