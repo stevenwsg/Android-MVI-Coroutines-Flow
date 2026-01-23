@@ -53,6 +53,7 @@ src/main/java/com/example/mvi/
 │   ├── BaseEvent.kt  # Event基类
 │   ├── BaseViewModel.kt # ViewModel基类
 │   ├── BaseActivity.kt # Activity基类
+│   ├── BaseFragment.kt # Fragment基类
 │   ├── MVIUtils.kt   # 工具类和扩展函数
 │   ├── DESIGN.md     # 架构设计文档
 │   ├── IMPLEMENTATION.md # 实现细节文档
@@ -62,7 +63,8 @@ src/main/java/com/example/mvi/
 │   ├── HomeState.kt  # 首页UI状态
 │   ├── HomeEvent.kt  # 首页一次性事件
 │   ├── HomeViewModel.kt # 首页业务逻辑
-│   └── HomeActivity.kt # 首页UI实现
+│   ├── HomeActivity.kt # 首页Activity实现
+│   └── HomeFragment.kt # 首页Fragment实现（可选）
 └── MainActivity.kt   # 应用入口
 ```
 
@@ -162,10 +164,9 @@ class MyViewModel : BaseViewModel<MyIntent, MyState, MyEvent>() {
 }
 ```
 
-### 3. 实现Activity
+### 3. 实现Activity或Fragment
 
-继承 `BaseActivity` 并实现UI渲染，完整示例参考 [USAGE.md](app/src/main/java/com/example/mvi/mvibase/USAGE.md)：
-
+#### Activity实现（继承 `BaseActivity`）：
 ```kotlin
 class MyActivity : BaseActivity<MyIntent, MyState, MyEvent, MyViewModel>() {
     override val viewModel: MyViewModel by viewModels()
@@ -186,6 +187,36 @@ class MyActivity : BaseActivity<MyIntent, MyState, MyEvent, MyViewModel>() {
         when (event) {
             is MyEvent.ShowToast -> Toast.makeText(this, event.message, Toast.LENGTH_SHORT).show()
             is MyEvent.NavigateToDetail -> startActivity(DetailActivity.createIntent(this, event.itemId))
+        }
+    }
+}
+```
+
+#### Fragment实现（继承 `BaseFragment`）：
+```kotlin
+class MyFragment : BaseFragment<MyIntent, MyState, MyEvent, MyViewModel>() {
+    override val viewModel: MyViewModel by viewModels()
+    
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        return inflater.inflate(R.layout.fragment_my, container, false)
+    }
+    
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // 初始化UI
+        dispatchIntent(MyIntent.LoadData)
+    }
+    
+    override fun render(state: MyState) {
+        // 根据状态更新UI
+        binding.progressBar.isVisible = state.isLoading
+        binding.recyclerView.adapter = MyAdapter(state.items)
+    }
+    
+    override fun handleEvent(event: MyEvent) {
+        when (event) {
+            is MyEvent.ShowToast -> Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
+            is MyEvent.NavigateToDetail -> findNavController().navigate(R.id.action_to_detail)
         }
     }
 }

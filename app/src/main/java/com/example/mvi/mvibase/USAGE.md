@@ -31,6 +31,7 @@ src/main/java/
     │   ├── BaseEvent.kt
     │   ├── BaseViewModel.kt
     │   ├── BaseActivity.kt
+    │   ├── BaseFragment.kt
     │   ├── MVIUtils.kt
     │   ├── DESIGN.md
     │   ├── IMPLEMENTATION.md
@@ -40,7 +41,8 @@ src/main/java/
     │   ├── HomeState.kt
     │   ├── HomeEvent.kt
     │   ├── HomeViewModel.kt
-    │   └── HomeActivity.kt
+    │   ├── HomeActivity.kt
+    │   └── HomeFragment.kt
     └── MainActivity.kt
 ```
 

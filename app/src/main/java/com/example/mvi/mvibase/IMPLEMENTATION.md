@@ -162,6 +162,72 @@ protected fun dispatchIntent(intent: I) {
 - 封装 ViewModel 的调用细节
 - 支持多种意图分发方式（点击、输入、生命周期等）
 
+### 5. BaseFragment 实现
+
+**文件位置**: `BaseFragment.kt`
+
+#### Fragment特有的生命周期处理
+```kotlin
+override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    observeState()
+    observeEvents()
+}
+```
+
+**技术细节**:
+- 在 `onViewCreated` 中开始观察，而不是 `onCreate`
+- 确保View已经创建完成，避免空指针异常
+- 遵循Fragment的最佳实践
+
+#### 状态观察（Fragment版本）
+```kotlin
+private fun observeState() {
+    viewLifecycleOwner.lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.state.collect { state ->
+                render(state)
+            }
+        }
+    }
+}
+```
+
+**技术细节**:
+- 使用 `viewLifecycleOwner` 而不是 `lifecycleScope`
+- 确保与Fragment的View生命周期同步
+- 避免View销毁后的状态更新
+
+#### 事件观察（Fragment版本）
+```kotlin
+private fun observeEvents() {
+    viewLifecycleOwner.lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.event.collect { event ->
+                handleEvent(event)
+            }
+        }
+    }
+}
+```
+
+**技术细节**:
+- 同样使用 `viewLifecycleOwner` 确保生命周期安全
+- 事件处理与Activity版本保持一致
+- 支持多个Fragment共享同一个ViewModel
+
+#### 意图分发
+```kotlin
+protected fun dispatchIntent(intent: I) {
+    viewModel.processIntent(intent)
+}
+```
+
+**设计选择**:
+- 与BaseActivity保持相同的API
+- 提供一致的开发体验
+- 支持Fragment间的意图通信
+
 ### 5. MVIUtils 实现
 
 **文件位置**: `MVIUtils.kt`
