@@ -41,8 +41,7 @@ src/main/java/
     │   ├── HomeState.kt
     │   ├── HomeEvent.kt
     │   ├── HomeViewModel.kt
-    │   ├── HomeActivity.kt
-    │   └── HomeFragment.kt
+    │   └── HomeActivity.kt
     └── MainActivity.kt
 ```
 

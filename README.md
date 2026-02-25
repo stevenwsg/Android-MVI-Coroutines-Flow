@@ -63,8 +63,7 @@ src/main/java/com/example/mvi/
 │   ├── HomeState.kt  # 首页UI状态
 │   ├── HomeEvent.kt  # 首页一次性事件
 │   ├── HomeViewModel.kt # 首页业务逻辑
-│   ├── HomeActivity.kt # 首页Activity实现
-│   └── HomeFragment.kt # 首页Fragment实现（可选）
+│   └── HomeActivity.kt # 首页UI实现
 └── MainActivity.kt   # 应用入口
 ```
 
