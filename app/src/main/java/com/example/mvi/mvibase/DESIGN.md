@@ -110,6 +110,71 @@ fun <T> Flow<Result<T>>.toResultState(): Flow<ResultState<T>> {
 }
 ```
 
+### 3. 替代方案：Retrofit CallAdapter（可选）
+
+如果你更喜欢更集成的网络层方案，可以使用Retrofit的CallAdapter直接返回Flow：
+
+#### 方案A：直接返回Flow<Data>
+```kotlin
+// 添加依赖
+dependencies {
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2")
+}
+
+// API接口定义
+interface ApiService {
+    @GET("data")
+    fun getData(): Flow<Data>  // 直接返回Flow
+    
+    @GET("data")  
+    suspend fun fetchData(): Data  // 或者返回suspend函数
+}
+
+// Retrofit配置
+val retrofit = Retrofit.Builder()
+    .baseUrl("https://api.example.com/")
+    .addConverterFactory(MoshiConverterFactory.create())
+    .addCallAdapterFactory(CoroutineCallAdapterFactory())  // 添加协程适配器
+    .build()
+```
+
+#### 方案B：自定义CallAdapter返回ResultState
+```kotlin
+// 自定义CallAdapterFactory
+class ResultStateCallAdapterFactory : CallAdapter.Factory() {
+    override fun get(
+        returnType: Type,
+        annotations: Array<Annotation>,
+        retrofit: Retrofit
+    ): CallAdapter<*, *>? {
+        // 实现返回Flow<ResultState<T>>的逻辑
+        return null
+    }
+}
+
+// API接口使用自定义适配器
+interface ApiService {
+    @GET("data")
+    fun getData(): Flow<ResultState<Data>>  // 直接返回ResultState
+}
+```
+
+#### 两种方案的对比
+| 特性 | Repository模式 | CallAdapter模式 |
+|------|----------------|-----------------|
+| 架构清晰度 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| 代码简洁性 | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| 灵活性 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ |
+| 可测试性 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| 错误处理 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ |
+| 学习曲线 | ⭐⭐⭐ | ⭐⭐⭐⭐ |
+
+**推荐选择**：
+- 对于大型项目：使用Repository模式，架构更清晰
+- 对于小型项目：可以使用CallAdapter模式，代码更简洁
+- 对于需要灵活错误处理的场景：优先选择Repository模式
+
 ## 🎨 UI 层设计
 
 ### 1. 组件化 UI
